@@ -7,6 +7,7 @@ import { BookCard } from './BookCard';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useAuth } from '@/contexts/AuthContext';
 
 export const BookBrowser = () => {
@@ -65,42 +66,59 @@ export const BookBrowser = () => {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col md:flex-row gap-4 items-center">
-        <Input
-          placeholder="Search books or authors..."
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          className="md:flex-1"
-        />
-        <Select value={genreFilter} onValueChange={setGenreFilter}>
-          <SelectTrigger className="w-full md:w-48">
-            <SelectValue placeholder="Filter by genre" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">All Genres</SelectItem>
-            {genres.map(genre => (
-              <SelectItem key={genre} value={genre}>{genre}</SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-        <Select value={sortBy} onValueChange={setSortBy}>
-          <SelectTrigger className="w-full md:w-48">
-            <SelectValue placeholder="Sort by" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="title">Title</SelectItem>
-            <SelectItem value="author">Author</SelectItem>
-            <SelectItem value="genre">Genre</SelectItem>
-          </SelectContent>
-        </Select>
-        <Button
-          variant="outline"
-          onClick={() => setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')}
-          className="w-full md:w-auto"
-        >
-          {sortOrder === 'asc' ? 'Ascending' : 'Descending'}
-        </Button>
-      </div>
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <img 
+              src="/logo.png" 
+              alt="Takshashil Library Logo" 
+              className="h-6 w-6 object-contain"
+              onError={(e) => {
+                e.currentTarget.style.display = 'none';
+              }}
+            />
+            Browse Books
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="flex flex-col md:flex-row gap-4 items-center">
+            <Input
+              placeholder="Search books or authors..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="md:flex-1"
+            />
+            <Select value={genreFilter} onValueChange={setGenreFilter}>
+              <SelectTrigger className="w-full md:w-48">
+                <SelectValue placeholder="Filter by genre" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Genres</SelectItem>
+                {genres.map(genre => (
+                  <SelectItem key={genre} value={genre}>{genre}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <Select value={sortBy} onValueChange={setSortBy}>
+              <SelectTrigger className="w-full md:w-48">
+                <SelectValue placeholder="Sort by" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="title">Title</SelectItem>
+                <SelectItem value="author">Author</SelectItem>
+                <SelectItem value="genre">Genre</SelectItem>
+              </SelectContent>
+            </Select>
+            <Button
+              variant="outline"
+              onClick={() => setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')}
+              className="w-full md:w-auto"
+            >
+              {sortOrder === 'asc' ? 'Ascending' : 'Descending'}
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
         {filteredBooks.map(book => (
@@ -114,7 +132,17 @@ export const BookBrowser = () => {
 
       {filteredBooks.length === 0 && (
         <div className="text-center py-12">
-          <p className="text-gray-500">No books found matching your criteria.</p>
+          <div className="flex flex-col items-center gap-4">
+            <img 
+              src="/logo.png" 
+              alt="Takshashil Library Logo" 
+              className="h-16 w-16 object-contain opacity-50"
+              onError={(e) => {
+                e.currentTarget.style.display = 'none';
+              }}
+            />
+            <p className="text-gray-500 dark:text-gray-400">No books found matching your criteria.</p>
+          </div>
         </div>
       )}
     </div>

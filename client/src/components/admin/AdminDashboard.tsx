@@ -9,7 +9,17 @@ export const AdminDashboard = () => {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h2 className="text-3xl font-bold">Admin Dashboard</h2>
+        <div className="flex items-center gap-3">
+          <img 
+            src="/logo.png" 
+            alt="Takshashil Library Logo" 
+            className="h-8 w-8 object-contain"
+            onError={(e) => {
+              e.currentTarget.style.display = 'none';
+            }}
+          />
+          <h2 className="text-3xl font-bold">Admin Dashboard</h2>
+        </div>
       </div>
 
       <Tabs defaultValue="books" className="space-y-4">
