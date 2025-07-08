@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useState, useEffect } from 'react';
-import { collection, query, onSnapshot, addDoc, updateDoc, deleteDoc, doc } from 'firebase/firestore';
+import { collection, query, onSnapshot, addDoc, updateDoc, deleteDoc, doc, serverTimestamp } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { Book } from '@/types';
 import { BookCard } from '../books/BookCard';
@@ -29,10 +29,15 @@ export const BookManagement = () => {
   useEffect(() => {
     const q = query(collection(db, 'books'));
     const unsubscribe = onSnapshot(q, (snapshot) => {
-      const booksData = snapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data()
-      })) as Book[];
+      const booksData = snapshot.docs.map(doc => {
+        const data = doc.data();
+        return {
+          id: doc.id,
+          ...data,
+          createdAt: data.createdAt?.toDate ? data.createdAt.toDate() : new Date(data.createdAt),
+          updatedAt: data.updatedAt?.toDate ? data.updatedAt.toDate() : new Date(data.updatedAt),
+        };
+      }) as Book[];
       setBooks(booksData);
     });
 
@@ -46,7 +51,7 @@ export const BookManagement = () => {
       ...formData,
       totalCopies: Number(formData.totalCopies),
       availableCopies: Number(formData.availableCopies),
-      updatedAt: new Date(),
+      updatedAt: serverTimestamp(),
     };
 
     try {
@@ -55,7 +60,7 @@ export const BookManagement = () => {
       } else {
         await addDoc(collection(db, 'books'), {
           ...bookData,
-          createdAt: new Date(),
+          createdAt: serverTimestamp(),
         });
       }
       resetForm();

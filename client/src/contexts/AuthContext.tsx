@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { createContext, useContext, useEffect, useState } from 'react';
 import { onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut } from 'firebase/auth';
-import { doc, getDoc, setDoc } from 'firebase/firestore';
+import { doc, getDoc, setDoc, serverTimestamp } from 'firebase/firestore';
 import { auth, db } from '@/lib/firebase';
 import { User, AuthContextType } from '@/types';
 
@@ -22,12 +22,21 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
       if (firebaseUser) {
-        const userDoc = await getDoc(doc(db, 'users', firebaseUser.uid));
-        if (userDoc.exists()) {
-          setUser({
-            id: firebaseUser.uid,
-            ...userDoc.data(),
-          } as User);
+        try {
+          const userDoc = await getDoc(doc(db, 'users', firebaseUser.uid));
+          if (userDoc.exists()) {
+            const userData = userDoc.data();
+            setUser({
+              id: firebaseUser.uid,
+              email: userData.email,
+              name: userData.name,
+              role: userData.role,
+              createdAt: userData.createdAt?.toDate ? userData.createdAt.toDate() : new Date(userData.createdAt),
+              isActive: userData.isActive,
+            } as User);
+          }
+        } catch (error) {
+          console.error('Error fetching user data:', error);
         }
       } else {
         setUser(null);
@@ -39,23 +48,39 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   }, []);
 
   const login = async (email: string, password: string) => {
-    await signInWithEmailAndPassword(auth, email, password);
+    try {
+      await signInWithEmailAndPassword(auth, email, password);
+    } catch (error) {
+      console.error('Login error:', error);
+      throw error;
+    }
   };
 
   const register = async (email: string, password: string, name: string) => {
-    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-    const newUser: Omit<User, 'id'> = {
-      email,
-      name,
-      role: 'user',
-      createdAt: new Date(),
-      isActive: true,
-    };
-    await setDoc(doc(db, 'users', userCredential.user.uid), newUser);
+    try {
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      const newUser = {
+        email,
+        name,
+        role: 'user',
+        createdAt: serverTimestamp(),
+        isActive: true,
+      };
+      await setDoc(doc(db, 'users', userCredential.user.uid), newUser);
+      console.log('User created successfully');
+    } catch (error) {
+      console.error('Registration error:', error);
+      throw error;
+    }
   };
 
   const logout = async () => {
-    await signOut(auth);
+    try {
+      await signOut(auth);
+    } catch (error) {
+      console.error('Logout error:', error);
+      throw error;
+    }
   };
 
   const value = {

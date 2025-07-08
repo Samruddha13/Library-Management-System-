@@ -14,10 +14,14 @@ export const UserManagement = () => {
   useEffect(() => {
     const q = query(collection(db, 'users'));
     const unsubscribe = onSnapshot(q, (snapshot) => {
-      const usersData = snapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data()
-      })) as User[];
+      const usersData = snapshot.docs.map(doc => {
+        const data = doc.data();
+        return {
+          id: doc.id,
+          ...data,
+          createdAt: data.createdAt?.toDate ? data.createdAt.toDate() : new Date(data.createdAt),
+        };
+      }) as User[];
       setUsers(usersData);
     });
 
@@ -58,6 +62,9 @@ export const UserManagement = () => {
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <h3 className="text-2xl font-bold">User Management</h3>
+        <div className="text-sm text-gray-600">
+          <p>To create the first admin: Register a user account, then manually change their role to 'admin' in Firebase Console</p>
+        </div>
       </div>
 
       <div className="rounded-md border">
@@ -94,7 +101,7 @@ export const UserManagement = () => {
                   </div>
                 </TableCell>
                 <TableCell>
-                  {new Date(user.createdAt).toLocaleDateString()}
+                  {user.createdAt ? new Date(user.createdAt).toLocaleDateString() : 'N/A'}
                 </TableCell>
                 <TableCell>
                   <div className="flex gap-2">
