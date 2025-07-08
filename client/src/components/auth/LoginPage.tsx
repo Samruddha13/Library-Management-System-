@@ -8,6 +8,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { ThemeToggle } from '@/components/ui/theme-toggle';
 import { useNavigate, Link } from 'react-router-dom';
 
+
 export const LoginPage = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -36,19 +37,31 @@ export const LoginPage = () => {
       <div className="absolute top-4 right-4">
         <ThemeToggle />
       </div>
+      <div className="relative min-h-screen bg-white dark:bg-black">
+        <img
+          src="/logo.png"
+          alt="watermark"
+          className="absolute top-1/2 left-1/2 w-[80%] max-w-[600px] opacity-5 -translate-x-1/2 -translate-y-1/2 pointer-events-none"
+        />
+
+        {/* Your Login Form */}
+      </div>
+
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
           <div className="flex items-center justify-center mb-4">
-            <img 
-              src="/logo.png" 
-              alt="Takshashil Library Logo" 
-              className="h-16 w-16 object-contain"
+            <img
+              src="./logo.png"
+              alt="Takshashil Library Logo"
+              className="h-20 w-20 object-contain"
               onError={(e) => {
-                e.currentTarget.style.display = 'none';
+                e.currentTarget.style.display = "none";
               }}
             />
           </div>
-          <CardTitle className="text-2xl font-bold">Takshashil Library & Study Centre</CardTitle>
+          <CardTitle className="text-2xl font-bold">
+            Takshashil Library & Study Centre
+          </CardTitle>
           <CardDescription>Sign in to your account</CardDescription>
         </CardHeader>
         <CardContent>
@@ -79,11 +92,14 @@ export const LoginPage = () => {
               <div className="text-red-500 text-sm text-center">{error}</div>
             )}
             <Button type="submit" className="w-full" disabled={loading}>
-              {loading ? 'Signing in...' : 'Sign In'}
+              {loading ? "Signing in..." : "Sign In"}
             </Button>
             <div className="text-center text-sm">
-              Don't have an account?{' '}
-              <Link to="/register" className="text-blue-600 hover:underline dark:text-blue-400">
+              Don't have an account?{" "}
+              <Link
+                to="/register"
+                className="text-blue-600 hover:underline dark:text-blue-400"
+              >
                 Register here
               </Link>
             </div>

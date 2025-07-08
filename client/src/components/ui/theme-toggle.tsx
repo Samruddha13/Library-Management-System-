@@ -13,7 +13,7 @@ export const ThemeToggle = () => {
       onClick={toggleTheme}
       className="h-9 w-9"
     >
-      {theme === 'light' ? (
+      {theme === 'dark' ? (
         <Moon className="h-4 w-4" />
       ) : (
         <Sun className="h-4 w-4" />
